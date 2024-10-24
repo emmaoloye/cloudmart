@@ -1,11 +1,12 @@
-FROM node:16-alpine as build
+FROM public.ecr.aws/docker/library/node:16-alpine as build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM node:16-alpine
+# Use the same Amazon ECR node image for the final stage
+FROM public.ecr.aws/docker/library/node:16-alpine
 WORKDIR /app
 RUN npm install -g serve
 COPY --from=build /app/dist /app
